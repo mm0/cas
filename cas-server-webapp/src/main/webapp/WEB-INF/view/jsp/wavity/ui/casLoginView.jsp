@@ -31,7 +31,81 @@
 <%@ page import="java.net.URL" %>
 <%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
 <%! public URL fileURL;%>
-	
+
+
+<c:if test="${!empty pac4jUrls}">
+            <div id="123123_list-providers" style="color:#fff">
+                <h3><spring:message code="screen.welcome.label.loginwith" /></h3>
+                <form>
+                    <ul>
+                        <c:forEach var="entry" items="${pac4jUrls}">
+                            <li id="123123_${entry.key}"><a id="a_123123_${entry.key}" href="${entry.value}" style="color:#fff">${entry.key}</a></li>
+                        </c:forEach>
+                    </ul>
+                </form>
+            </div>
+</c:if>
+
+
+<%
+String auto = request.getParameter("auto");
+String facebookOauth = request.getParameter("facebookOauth");
+
+try {
+	if(facebookOauth != null & facebookOauth.equals("true")) {
+	%>
+		<p>Facebook Oauth</p>
+		<script type="text/javascript">
+			alert("abc");
+			alert(document.getElementById("a_123123_Facebook").href);
+			location.href = document.getElementById("a_123123_Facebook").href;
+		</script>
+	<%
+	}
+	else {
+	%>
+		<p>Doesn't USE!!!!!</p>
+	<%
+	}
+} catch(Exception e) {
+%>
+	<p>Exception!!!!!</p>
+<%
+}
+
+if (auto != null && auto.equals("true")) {
+%>
+
+
+<html>
+    <head>
+        <script language="javascript">
+            function doAutoLogin() {
+                document.forms[0].submit();
+            }
+        </script>
+    </head>
+    <body onload="doAutoLogin();">
+        <form id="credentials" method="POST" action="<%= request.getContextPath() %>/login?service=<%= request.getParameter("service") %>">
+            <input type="hidden" name="lt" value="${loginTicket}" />
+            <input type="hidden" name="execution" value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="submit" />
+            <input type="hidden" name="username" value="<%= request.getParameter("username") %>" />
+            <input type="hidden" name="password" value="<%= request.getParameter("password") %>" />
+            <% if ("true".equals(request.getParameter("rememberMe"))) {%>
+                <input type="hidden" name="rememberMe" value="true" />
+            <% } %>
+             
+            <input type="submit" value="Submit" style="visibility: hidden;" />
+        </form>
+    </body>
+</html>
+
+
+
+<%
+} else {
+%>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
@@ -134,3 +208,6 @@
 
 	</body>
 </html>
+<%
+}
+%>
