@@ -34,10 +34,10 @@
 
 <%
 String auto = request.getParameter("auto");
-String oauth = request.getParameter("radio_oauth");
+String chosenProvider = request.getParameter("chosenProvider");
 
 if (auto != null && auto.equals("true")) {
-	if(oauth != null) {
+	if(chosenProvider != null && !chosenProvider.equals("")) {
 	%>
 		<c:if test="${!empty pac4jUrls}">
 			<div style="color:#fff">
@@ -53,7 +53,7 @@ if (auto != null && auto.equals("true")) {
 		</c:if>
 			
 		<script type="text/javascript">
-			var clicked = "<%= oauth %>";
+			var clicked = "<%= chosenProvider %>";
 			location.href = document.getElementById(clicked).href;
 		</script>
 	<%
