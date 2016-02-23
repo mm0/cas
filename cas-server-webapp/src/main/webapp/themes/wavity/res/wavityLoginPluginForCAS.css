@@ -1,4 +1,12 @@
+.loginPlugin_loginLink span {
+	cursor: pointer;
+	text-decoration: underline;
+    font-size: 12px;
+    color: #666666;
+}
+
 .loginPlugin_wrapper {
+	display: none;
 	/* border:1px solid #69DF60;  */
 	border: 5px solid #e0e0e0;
     -moz-border-radius: 5px;
@@ -6,6 +14,10 @@
 	overflow:hidden; 
 	width: 500px;
 	padding-bottom: 10px;
+	position: fixed;
+    background: #fff;
+    top: 30px;
+    left: 30px;
 }
 
 .loginPlugin_wrapper .loginPlugin_header {
@@ -58,5 +70,11 @@
 	border: 0px; 
 	color: #fff; 
 	padding: 7px 22px 7px 22px;
+	cursor: pointer;
+}
+
+.loginPlugin_header .loginPlugin_closeButton {
+	float: right;
+	margin: 0px;
 	cursor: pointer;
 }

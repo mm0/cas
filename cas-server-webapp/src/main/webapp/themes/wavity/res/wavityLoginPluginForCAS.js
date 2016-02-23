@@ -5,6 +5,8 @@ var wavityLoginPluginForCAS = function() {
 
 wavityLoginPluginForCAS.prototype.embedLoginPlugin = function(parameters) {
 	this.setParameters(parameters);
+
+	this.replaceContainerID();
 	this.replaceCASServerURLInForm();
 	this.replaceRedirectURLInForm();
 	this.putPluginHTMLCodes();
@@ -14,6 +16,10 @@ wavityLoginPluginForCAS.prototype.setParameters = function(parameters) {
 	this.containerID = parameters.containerID;
 	this.redirectURL = parameters.redirectURL;
 	this.casServerURL = parameters.casServerURL;
+};
+
+wavityLoginPluginForCAS.prototype.replaceContainerID = function() {
+	this.pluginHTMLCodes = this.pluginHTMLCodes.replace("@containerID@", this.containerID);
 };
 
 wavityLoginPluginForCAS.prototype.replaceCASServerURLInForm = function() {
@@ -55,10 +61,21 @@ wavityLoginPluginForCAS.prototype.putPluginHTMLCodes = function() {
 wavityLoginPluginForCAS.prototype.clickOauthProvider = function(providerImgElement) {
 	document.getElementById("loginPlugin_clickedProvider").value = providerImgElement.name;
 	document.forms["loginPluginForm"].submit();
-}
+};
+
+wavityLoginPluginForCAS.prototype.showLoginPlugin = function() {
+	document.getElementsByClassName('loginPlugin_wrapper')[0].style.display = "block";
+};
+
+wavityLoginPluginForCAS.prototype.hideLoginPlugin = function() {
+	document.getElementsByClassName('loginPlugin_wrapper')[0].style.display = "none";
+};
 
 var pluginHTMLCodes = '\
-	<form name="loginPluginForm" method="POST" action="@CASServerURL@">\
+	<div class="loginPlugin_loginLink">\
+		<span onclick="wavityLoginPlugin.showLoginPlugin()">LOGIN</span>\
+	</div>\
+	<form name="loginPluginForm" method="POST" action="@CASServerURL@" class="loginPlugin_form">\
 	    <input type="hidden" name="service" value="@redirectURL@" />\
 		<input type="hidden" name="auto" value="true" />\
 		<input type="hidden" name="chosenProvider" id="loginPlugin_clickedProvider" value=""/>\
@@ -79,7 +96,12 @@ var pluginHTMLCodes = '\
 		        </div>\
 	        </div>\
 	        <div class="loginPlugin_loginForm">\
-				<div class="loginPlugin_header">LOGIN HERE</div>\
+				<div class="loginPlugin_header">\
+					LOGIN HERE\
+					<div class="loginPlugin_closeButton" onclick="wavityLoginPlugin.hideLoginPlugin()">\
+						<img src="http://cdn.gigya.com/gs/i/accounts/close_dialog.png">\
+					</div>\
+				</div>\
 		        <div class="loginPlugin_username">\
 					<div class="loginPlugin_label">Username : </div>\
 					<input type="text" name="username"/>\
