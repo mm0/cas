@@ -32,5 +32,13 @@
             </cas:attributes>
         </c:if>
 
+		<cas:attributes> 
+			<c:forEach var="auth" items="${assertion.chainedAuthentications}"> 
+				<c:forEach var="attr" items="${auth.principal.attributes}" > 
+					<cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attr.value)} </cas:${fn:escapeXml(attr.key)}> 
+				</c:forEach> 
+			</c:forEach> 
+		</cas:attributes>
+
     </cas:authenticationSuccess>
 </cas:serviceResponse>
