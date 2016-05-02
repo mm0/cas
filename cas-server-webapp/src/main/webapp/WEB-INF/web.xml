@@ -20,6 +20,11 @@
             classpath*:/META-INF/spring/*.xml
         </param-value>
     </context-param>
+    
+    <context-param>
+      <param-name>wavityConfigLocation</param-name>
+      <param-value>/WEB-INF/wavity-configuration</param-value>
+    </context-param>
 
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
@@ -56,7 +61,23 @@
         <filter-name>responseHeadersSecurityFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+    
+    <!-- listener declaration order matters -->
+    <!-- 
+    	Wavity listeners before other listeners
+    -->
+    <listener>
+		<listener-class>com.wavity.plan.api.PlanListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.wavity.cache.api.CacheListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.wavity.zookeeper.api.ZooKeeperListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.wavity.broker.api.BrokerListener</listener-class>
+	</listener>
     <!--
       - Loads the CAS ApplicationContext.
     -->

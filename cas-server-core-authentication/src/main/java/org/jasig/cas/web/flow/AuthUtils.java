@@ -37,12 +37,11 @@ public final class AuthUtils {
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       String uri = httpRequest.getParameter("service");
       if(uri==null) {
-        //TODO: Think of an appropriate error.
-        return SELF;
+        uri = httpRequest.getRequestURL().toString();
       }
      tenantID = extractTenantID(uri);
     }
-    
+
     return tenantID;
   }
 
@@ -127,6 +126,25 @@ public final class AuthUtils {
     return tenantId;
   }
 
+  /**
+   * Sets the credential
+   *
+   * @param credential the string of the credential
+   */
+  public static void setCredential(String credential) {
+	  CredentialContextHolder.unset();
+	  CredentialContextHolder.set(credential);
+  }
+
+  /**
+   * Returns the credential
+   *
+   * @return
+   */
+  public static String getCredential() {
+	  return CredentialContextHolder.get();
+  }
+
 
   //This class maintains the tenant context into a threadlocal object.
   private static final class TenantContextHolder {
@@ -156,5 +174,42 @@ public final class AuthUtils {
     public static String get() {
         return threadLocal.get();
     }
+  }
+
+  /**
+   * This class maintains the credential context in a Threadlocal object
+   * @author davidlee
+   *
+   */
+  private static final class CredentialContextHolder {
+
+	  /**
+	   * Threadlocal object
+	   */
+	  private static final ThreadLocal<String> threadLocal = new ThreadLocal<>();
+
+	  /**
+	   * Sets the credential, user ID
+	   *
+	   * @param credential the string of user ID
+	   */
+	  public static void set(String credential) {
+		  threadLocal.set(credential);
+	  }
+
+	  /**
+	   * Unsets the credential
+	   */
+	  public static void unset() {
+		  threadLocal.remove();
+	  }
+
+	  /**
+	   * Gets the credential
+	   * @return
+	   */
+	  public static String get() {
+		  return threadLocal.get();
+	  }
   }
 }

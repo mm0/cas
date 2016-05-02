@@ -114,7 +114,12 @@
 
     <action-state id="sendTicketGrantingTicket">
         <evaluate expression="sendTicketGrantingTicketAction"/>
-        <transition to="serviceCheck"/>
+        <transition to="producingMessage"/>
+    </action-state>
+
+	<action-state id="producingMessage">
+        <evaluate expression="producingMessageAction"/>
+        <transition on="success" to="serviceCheck"/>
     </action-state>
 
     <decision-state id="serviceCheck">
@@ -139,6 +144,7 @@
                   result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response"/>
         <transition to="postRedirectDecision"/>
     </action-state>
+
 
     <decision-state id="postRedirectDecision">
         <if test="requestScope.response.responseType.name() == 'POST'" then="postView" else="redirectView"/>

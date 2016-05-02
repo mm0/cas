@@ -46,7 +46,7 @@ dependencies {
   compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
   compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
   compile group: 'com.google.guava', name: 'guava', version:guavaVersion
-  
+    
   compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
     exclude(module: 'slf4j-api')
   }
@@ -88,5 +88,9 @@ dependencies {
   testCompile project(':cas-server-core-monitor')
   testCompile project(path: ":cas-server-core-services", configuration: "tests")
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+  
+  compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
+    exclude(module: 'slf4j-api')
+  }
 }
 
