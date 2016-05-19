@@ -2,6 +2,8 @@ package org.jasig.cas.web.flow;
 
 import java.util.Calendar;
 import java.util.EnumMap;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -52,6 +54,13 @@ public class ProducingMessageAction extends AbstractAction {
 			tenantId = AuthUtils.extractTenantID(request);
 		}
 
+		String test11 = request.getParameter("client_name");
+		String test12 = request.getParameter("username");
+		Map<String, String[]> test2 = request.getParameterMap();
+		Enumeration<String> test3 = request.getParameterNames();
+		String[] test41 = request.getParameterValues("client_name");
+		String[] test42 = request.getParameterValues("username");
+		
 		final Credential credential = WebUtils.getCredential(context);
 
 		if ((tenantId == null || "".equals(tenantId)) || credential == null) {
