@@ -61,6 +61,20 @@ public class ProducingMessageAction extends AbstractAction {
 		String[] test41 = request.getParameterValues("client_name");
 		String[] test42 = request.getParameterValues("username");
 		
+		String strtest11 = "request.getParameter(\"client_name\") >> " + test11;
+		String strtest12 = "request.getParameter(\"username\") >> " + test12;
+		String strtest2 = "request.getParameterMap() >> " + test2;
+		String strtest3 = "request.getParameterNames() >> " + test3;
+		String strtest41 = "request.getParameterValues(\"client_name\") >> " + test41;
+		String strtest42 = "request.getParameterValues(\"username\") >> " + test42;
+		
+		logger.info(strtest11);
+		logger.info(strtest12);
+		logger.info(strtest2);
+		logger.info(strtest3);
+		logger.info(strtest41);
+		logger.info(strtest42);
+		
 		final Credential credential = WebUtils.getCredential(context);
 
 		if ((tenantId == null || "".equals(tenantId)) || credential == null) {
