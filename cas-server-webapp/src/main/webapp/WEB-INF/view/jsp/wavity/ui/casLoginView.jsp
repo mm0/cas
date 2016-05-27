@@ -135,8 +135,9 @@ else {
 			appName = str3.split("\\?")[0];
 	    }
 
-		//String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
-		//String appLogo = ThemeUtils.fetchAppLogo(appName);
+		/* String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
+		String appLogo = ThemeUtils.fetchAppLogo(appName); */
+		
 		String tenantLogo = null;
 		String appLogo = null;
 	    %>
