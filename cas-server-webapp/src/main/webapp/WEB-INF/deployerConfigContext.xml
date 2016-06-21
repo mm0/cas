@@ -45,6 +45,7 @@
           p:backingMap-ref="attrRepoBackingMap" />
 
     <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
+    <alias name="tokenAuthenticationHandler" alias="primaryAuthenticationHandler" />
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
     
     <util:map id="attrRepoBackingMap">
