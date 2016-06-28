@@ -106,7 +106,7 @@ public final class AuthUtils {
       LOGGER.info("extracted tenant ID:{}", tenantID);
     }
 
-    return "acme";
+    return tenantID;
   }
 
 
