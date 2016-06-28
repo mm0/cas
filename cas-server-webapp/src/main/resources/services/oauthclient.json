@@ -1,6 +1,6 @@
 {
   "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
-  "serviceId" : "http://accounts.wavity.com/auth/callbackAuthorize",
+  "serviceId" : "http://accounts.wavity.com:8080/auth/callbackAuthorize",
   "name" : "my great webapp for OAuth",
   "id" : 11,
   "description" : "The greatest application ever!",
