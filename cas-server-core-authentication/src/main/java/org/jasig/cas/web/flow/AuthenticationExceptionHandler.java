@@ -99,7 +99,7 @@ public class AuthenticationExceptionHandler {
      * {@code [messageBundlePrefix][exceptionClassSimpleName]} for each handler error that is
      * configured. If not match is found, {@value #UNKNOWN} is returned.
      */
-    public String handle(final RequestContext context, final AuthenticationException e, final MessageContext messageContext) {
+    public String handle(final AuthenticationException e, final MessageContext messageContext) {
     	if (e != null) {
             final MessageBuilder builder = new MessageBuilder();
             for (final Class<? extends Exception> kind : this.errors) {
@@ -108,7 +108,7 @@ public class AuthenticationExceptionHandler {
                         final String handlerErrorName = handlerError.getSimpleName();
                         final String messageCode = this.messageBundlePrefix + handlerErrorName;
                         messageContext.addMessage(builder.error().code(messageCode).build());
-                        produceBrokerMessage(context, handlerErrorName, messageCode);
+                        produceBrokerMessage(messageContext, handlerErrorName, messageCode);
                         return handlerErrorName;
                     }
                 }
@@ -117,7 +117,7 @@ public class AuthenticationExceptionHandler {
         }
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         logger.trace("Unable to translate handler errors of the authentication exception {}. Returning {} by default...", e, messageCode);
-        produceBrokerMessage(context, messageCode);
+        produceBrokerMessage(messageContext, messageCode);
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
     }
@@ -128,12 +128,12 @@ public class AuthenticationExceptionHandler {
      * @param handlerErrorName the string of the handler error name
      * @param messageCode the string of the message code
      */
-    private final void produceBrokerMessage(final RequestContext context, final String handlerErrorName, final String messageCode) {
+    private final void produceBrokerMessage(final MessageContext messageContext, final String handlerErrorName, final String messageCode) {
     	if (("".equals(handlerErrorName) || handlerErrorName == null) || ("".equals(messageCode) || messageCode == null)) {
     		logger.error("*** handlerErrorName and messageCode required to publish a message ***");
     		return;
     	}
-    	publishMessage(context, String.format("handler error: %s, message code: %s", handlerErrorName, messageCode));
+    	publishMessage(messageContext, String.format("handler error: %s, message code: %s", handlerErrorName, messageCode));
     }
     
     /**
@@ -141,12 +141,12 @@ public class AuthenticationExceptionHandler {
      * 
      * @param messageCode the string of message code
      */
-    private final void produceBrokerMessage(final RequestContext context, final String messageCode) {
+    private final void produceBrokerMessage(final MessageContext messageContext, final String messageCode) {
     	if ("".equals(messageCode) || messageCode == null) {
     		logger.error("*** message code is required to publish a message ***");
     		return;
     	}
-    	publishMessage(context, messageCode);
+    	publishMessage(messageContext, messageCode);
     }
     
     /**
@@ -154,7 +154,7 @@ public class AuthenticationExceptionHandler {
      * 
      * @param message the string of message
      */
-    private final void publishMessage(final RequestContext context, final String message) {
+    private final void publishMessage(final MessageContext messageContext, final String message) {
     	if ("".equals(message) || message == null) {
     		logger.error("*** the message is required to pubish an error message ***");
     		return;
@@ -163,7 +163,7 @@ public class AuthenticationExceptionHandler {
 		final String user = AuthUtils.getCredential();
 		final String messageforBroker = String.format("Credential: %s, message: %s", user, message);
 		try {
-          EventPublisher.publishEvent(context.getMessageContext(),
+          EventPublisher.publishEvent(messageContext,
         	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, messageforBroker);
           logger.info("Successfully published login event for a user " + user);
         }
