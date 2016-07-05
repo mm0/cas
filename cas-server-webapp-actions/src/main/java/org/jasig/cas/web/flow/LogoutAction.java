@@ -16,6 +16,8 @@ import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
+import org.jasig.cas.web.wavity.event.EventPublisher;
+import org.jasig.cas.web.wavity.event.EventResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,7 +122,7 @@ public final class LogoutAction extends AbstractLogoutAction {
 			logger.error("*** Tenant ID can't be empty or null ***");
 			return;
 		}
-		try {
+		/*try {
 			final BrokerProvider brokerProvider = BrokerProvider.getInstance();
 			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
 			attr.put(EventAttribute.MESSAGE, String.format("The user %s logged out", AuthUtils.getCredential()));
@@ -132,6 +134,18 @@ public final class LogoutAction extends AbstractLogoutAction {
 			brokerProvider.publish(TopicType.ADMIN, EventType.EVENT_TYPE_SSO_AUTHENTICATION, attr);
 		} catch (Exception e) {
 			logger.error("broker failed to publish event", e);
-		}
+		}*/
+		
+		final String user = AuthUtils.getCredential();
+		final String message = String.format("The user %s logged out", user);
+        WebUtils.putDefaultValueOfBrokerEvent(context, request);
+		try {
+          EventPublisher.publishEvent(context.getMessageContext(),
+        	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
+          logger.info("Successfully published logout event for a user " + user);
+        }
+        catch (final Exception e) {
+        	logger.warn("Could not publish logout event for a user "+ user, e);
+        }
     }
 }

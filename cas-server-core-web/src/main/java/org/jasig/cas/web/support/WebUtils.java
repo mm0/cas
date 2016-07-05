@@ -13,6 +13,8 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,6 +24,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.wavity.broker.util.EventAttribute;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Common utilities for the web tier.
@@ -436,5 +441,107 @@ public final class WebUtils {
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
+    }
+    
+    /**
+     * Put ticket granting ticket in request and flow scopes.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void putKeyValue(
+            final RequestContext context, @NotNull final String key, @NotNull final String value) {
+        //putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
+    	putKeyValueIntoMap(context.getFlowScope(), key, value);
+    }
+    
+    /**
+     * Put ticket granting ticket in request and flow scopes.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void putKeyValue(
+            final RequestContext context, @NotNull final String key, @NotNull final Boolean value) {
+        //putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
+    	putKeyValueIntoMap(context.getFlowScope(), key, value);
+    }
+    
+    /**
+     * Put ticket granting ticket into map that is either backed by the flow/request scope.
+     * Will override the previous value and blank out the setting if value is null or empty.
+     * @param map the map
+     * @param key the key
+     * @param value the value
+     */
+    private static void putKeyValueIntoMap(final MutableAttributeMap map,
+    													@NotNull final String key,
+                                                        @NotNull final String value) {
+        map.put(key, value);
+    }
+    
+    /**
+     * Put ticket granting ticket into map that is either backed by the flow/request scope.
+     * Will override the previous value and blank out the setting if value is null or empty.
+     * @param map the map
+     * @param key the key
+     * @param value the value
+     */
+    private static void putKeyValueIntoMap(final MutableAttributeMap map,
+    													@NotNull final String key,
+                                                        @NotNull final Boolean value) {
+        map.put(key, value);
+    }
+    
+    /**
+     * Put ticket granting ticket in request and flow scopes.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void putDefaultValueOfBrokerEvent(
+            final RequestContext context, final HttpServletRequest httpReq) {
+    	putKeyValue(context, "actorId", "30ba7ea0-b1d3-3025-a36f-7c8e1f0c4b51");
+    	putKeyValue(context, "actorName", "cloudadmin@wavity.com");
+    	putKeyValue(context, "clientId", httpReq.getRemoteUser());
+    	putKeyValue(context, "clientIp", httpReq.getRemoteHost());
+    	putKeyValue(context, "ecId", UUID.randomUUID().toString());
+    	putKeyValue(context, "eventId", UUID.randomUUID().toString());
+    	putKeyValue(context, "hostIp", httpReq.getLocalAddr());
+    	putKeyValue(context, "hostName", httpReq.getLocalName());
+    }
+    
+    /**
+     * Put ticket granting ticket in request and flow scopes.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void putDefaultValueOfBrokerEvent(
+            final MessageContext messageContext, final HttpServletRequest httpReq) {
+    	addValueInMessageContext(messageContext, "actorId", "30ba7ea0-b1d3-3025-a36f-7c8e1f0c4b51");
+    	addValueInMessageContext(messageContext, "actorName", "cloudadmin@wavity.com");
+    	addValueInMessageContext(messageContext, "clientId", httpReq.getRemoteUser());
+    	addValueInMessageContext(messageContext, "clientIp", httpReq.getRemoteHost());
+    	addValueInMessageContext(messageContext, "ecId", UUID.randomUUID().toString());
+    	addValueInMessageContext(messageContext, "eventId", UUID.randomUUID().toString());
+    	addValueInMessageContext(messageContext, "hostIp", httpReq.getLocalAddr());
+    	addValueInMessageContext(messageContext, "hostName", httpReq.getLocalName());
+    }
+    
+    /**
+     * Add message in message context.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void addValueInMessageContext(
+            final MessageContext messageContext,
+            @NotNull final String source, @NotNull final String value) {
+    	final MessageBuilder messageBuilder = new MessageBuilder();
+    	messageBuilder.source(source);
+    	if(value != null) {
+    		messageContext.addMessage(messageBuilder.info().code(value).build());
+    	}
     }
 }
