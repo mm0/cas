@@ -35,57 +35,9 @@ public final class EventPublisher
   /**
    * Publishes the specified event.
    *
-   * @param ctx The  request context.
+   * @param msgContext The  request context.
    * @param type The event type.
-   * @param result The event result.
-   * @param message The event message.
-   * @throws Exception In case of any errors while publishing the event.
-   */
-  public static void publishEvent(final RequestContext ctx,
-      final EventType type,
-      final String tenantName,
-      final EventResult result,
-      final String message) throws Exception
-  {
-    final BrokerProvider broker = BrokerProvider
-        .getInstance();
-    final EnumMap<EventAttribute, Object> attr =
-        new EnumMap<EventAttribute, Object>(
-            EventAttribute.class);
-    // The actual message.
-    attr.put(MESSAGE, message);
-    // The actor or the principal info.
-    attr.put(ACTOR_NAME, ctx.getFlowScope().get(ACTOR_NAME.toString()));
-    attr.put(ACTOR_ID, ctx.getFlowScope().get(ACTOR_ID.toString()));
-    // The client.
-    attr.put(CLIENT_ID, ctx.getFlowScope().get(CLIENT_ID.toString()));
-    attr.put(CLIENT_IP, ctx.getFlowScope().get(CLIENT_IP.toString()));
-    // The ecid to be used across all applications.
-    attr.put(EC_ID, ctx.getFlowScope().get(EC_ID.toString()));
-    // The event id for this specific event.
-    attr.put(EVENT_ID, ctx.getFlowScope().get(EVENT_ID.toString()));
-    // The server info.
-    attr.put(HOST_IP, ctx.getFlowScope().get(HOST_IP.toString()));
-    attr.put(HOST_NAME, ctx.getFlowScope().get(HOST_NAME.toString()));
-    // The constant service name.
-    attr.put(SERVICE_NAME, "CAS".intern());
-    // The tenant name.
-    attr.put(TENANT_NAME, tenantName);
-    // Time stamp.
-    attr.put(TIMESTAMP, Long.toString(
-        Calendar.getInstance().getTimeInMillis()));
-    attr.put(IS_NOTIFY_TARGET, true);
-    // event related.
-    attr.put(EVENT_RESULT, result.toString());
-    attr.put(EVENT_TYPE, type.toString());
-    broker.publish(TopicType.ADMIN, type, attr);
-  }
-  
-  /**
-   * Publishes the specified event.
-   *
-   * @param ctx The  request context.
-   * @param type The event type.
+   * @param tenantName The tenant name.
    * @param result The event result.
    * @param message The event message.
    * @throws Exception In case of any errors while publishing the event.
@@ -130,9 +82,9 @@ public final class EventPublisher
   /**
    * Add value to attribute.
    *
-   * @param ctx The attribute.
+   * @param attr The attribute.
    * @param key The key.
-   * @param value The value.
+   * @param messages The messages.
    */
   public static void addValueIntoAttr(EnumMap<EventAttribute, Object> attr, final EventAttribute key, final Message[] messages)
   {

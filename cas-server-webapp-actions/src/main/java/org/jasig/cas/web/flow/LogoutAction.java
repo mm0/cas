@@ -128,7 +128,7 @@ public final class LogoutAction extends AbstractLogoutAction {
 		
 		final String user = context.getMessageContext().getMessagesBySource("logout_userId")[0].getText();
 		final String message = String.format("The user %s logged out", user);
-        WebUtils.putDefaultValueOfBrokerEvent(context.getMessageContext(), request);
+        WebUtils.putValuesOfBrokerEvent(context.getMessageContext(), request);
 		try {
           EventPublisher.publishEvent(context.getMessageContext(),
         	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);

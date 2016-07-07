@@ -86,7 +86,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
         
-        WebUtils.putDefaultValueOfBrokerEvent(context, request);
+        WebUtils.putValuesOfBrokerEvent(context.getMessageContext(), request);
         
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 

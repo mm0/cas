@@ -109,7 +109,7 @@ public class AuthenticationViaFormAction {
         AuthUtils.setTenantId(tenantId);
         AuthUtils.setCredential(credential.toString());
 
-        WebUtils.putDefaultValueOfBrokerEvent(context.getMessageContext(), req);
+        WebUtils.putValuesOfBrokerEvent(context.getMessageContext(), req);
         
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);

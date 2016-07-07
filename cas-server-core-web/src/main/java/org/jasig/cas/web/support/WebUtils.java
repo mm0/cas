@@ -442,82 +442,14 @@ public final class WebUtils {
             LOGGER.debug("No warning cookie generator is defined");
         }
     }
-    
+      
     /**
-     * Put ticket granting ticket in request and flow scopes.
+     * Put values to produce a broker event in a message context.
      *
-     * @param context the context
-     * @param ticketValue the ticket value
+     * @param messageContext the message context
+     * @param httpReq the http request
      */
-    public static void putKeyValue(
-            final RequestContext context, @NotNull final String key, @NotNull final String value) {
-        //putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
-    	putKeyValueIntoMap(context.getFlowScope(), key, value);
-    }
-    
-    /**
-     * Put ticket granting ticket in request and flow scopes.
-     *
-     * @param context the context
-     * @param ticketValue the ticket value
-     */
-    public static void putKeyValue(
-            final RequestContext context, @NotNull final String key, @NotNull final Boolean value) {
-        //putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
-    	putKeyValueIntoMap(context.getFlowScope(), key, value);
-    }
-    
-    /**
-     * Put ticket granting ticket into map that is either backed by the flow/request scope.
-     * Will override the previous value and blank out the setting if value is null or empty.
-     * @param map the map
-     * @param key the key
-     * @param value the value
-     */
-    private static void putKeyValueIntoMap(final MutableAttributeMap map,
-    													@NotNull final String key,
-                                                        @NotNull final String value) {
-        map.put(key, value);
-    }
-    
-    /**
-     * Put ticket granting ticket into map that is either backed by the flow/request scope.
-     * Will override the previous value and blank out the setting if value is null or empty.
-     * @param map the map
-     * @param key the key
-     * @param value the value
-     */
-    private static void putKeyValueIntoMap(final MutableAttributeMap map,
-    													@NotNull final String key,
-                                                        @NotNull final Boolean value) {
-        map.put(key, value);
-    }
-    
-    /**
-     * Put ticket granting ticket in request and flow scopes.
-     *
-     * @param context the context
-     * @param ticketValue the ticket value
-     */
-    public static void putDefaultValueOfBrokerEvent(
-            final RequestContext context, final HttpServletRequest httpReq) {
-    	putKeyValue(context, "actorId", "30ba7ea0-b1d3-3025-a36f-7c8e1f0c4b51");
-    	putKeyValue(context, "actorName", "cloudadmin@wavity.com");
-    	putKeyValue(context, "clientId", httpReq.getRemoteUser());
-    	putKeyValue(context, "clientIp", httpReq.getRemoteHost());
-    	putKeyValue(context, "ecId", UUID.randomUUID().toString());
-    	putKeyValue(context, "eventId", UUID.randomUUID().toString());
-    	putKeyValue(context, "hostIp", httpReq.getLocalAddr());
-    	putKeyValue(context, "hostName", httpReq.getLocalName());
-    }
-    
-    /**
-     * Put ticket granting ticket in request and flow scopes.
-     *
-     * @param context the context
-     * @param ticketValue the ticket value
-     */
-    public static void putDefaultValueOfBrokerEvent(
+    public static void putValuesOfBrokerEvent(
             final MessageContext messageContext, final HttpServletRequest httpReq) {
     	addValueInMessageContext(messageContext, "actorId", "30ba7ea0-b1d3-3025-a36f-7c8e1f0c4b51");
     	addValueInMessageContext(messageContext, "actorName", "cloudadmin@wavity.com");
@@ -532,8 +464,9 @@ public final class WebUtils {
     /**
      * Add message in message context.
      *
-     * @param context the context
-     * @param ticketValue the ticket value
+     * @param messageContext the message context
+     * @param source the source
+     * @param value the value
      */
     public static void addValueInMessageContext(
             final MessageContext messageContext,
