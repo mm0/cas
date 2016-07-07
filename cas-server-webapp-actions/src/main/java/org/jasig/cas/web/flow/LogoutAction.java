@@ -1,5 +1,7 @@
 package org.jasig.cas.web.flow;
 
+import static com.wavity.broker.util.EventAttribute.CLIENT_ID;
+
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.jasig.cas.web.wavity.event.EventPublisher;
 import org.jasig.cas.web.wavity.event.EventResult;
@@ -122,23 +125,10 @@ public final class LogoutAction extends AbstractLogoutAction {
 			logger.error("*** Tenant ID can't be empty or null ***");
 			return;
 		}
-		/*try {
-			final BrokerProvider brokerProvider = BrokerProvider.getInstance();
-			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
-			attr.put(EventAttribute.MESSAGE, String.format("The user %s logged out", AuthUtils.getCredential()));
-			attr.put(EventAttribute.ACTOR_ID, tenantId);
-			attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));
-			attr.put(EventAttribute.IS_NOTIFY_TARGET, true);
-			attr.put(EventAttribute.EVENT_RESULT, "success");
-			attr.put(EventAttribute.EC_ID, "Test EC ID");
-			brokerProvider.publish(TopicType.ADMIN, EventType.EVENT_TYPE_SSO_AUTHENTICATION, attr);
-		} catch (Exception e) {
-			logger.error("broker failed to publish event", e);
-		}*/
 		
-		final String user = AuthUtils.getCredential();
+		final String user = context.getMessageContext().getMessagesBySource("logout_userId")[0].getText();
 		final String message = String.format("The user %s logged out", user);
-        WebUtils.putDefaultValueOfBrokerEvent(context, request);
+        WebUtils.putDefaultValueOfBrokerEvent(context.getMessageContext(), request);
 		try {
           EventPublisher.publishEvent(context.getMessageContext(),
         	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);

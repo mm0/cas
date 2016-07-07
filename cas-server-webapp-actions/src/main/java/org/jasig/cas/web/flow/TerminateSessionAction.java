@@ -9,9 +9,14 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -27,7 +32,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Component("terminateSessionAction")
 public final class TerminateSessionAction {
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
     /** Webflow event helper component. */
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
@@ -75,6 +81,21 @@ public final class TerminateSessionAction {
             tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         if (tgtId != null) {
+        	final String flowDefinitionId = context.getFlowExecutionContext().getDefinition().getId();
+        	if(flowDefinitionId != null && flowDefinitionId.equals("logout")) {
+		        try {
+					TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+					final Principal userPrincipal = ticket.getAuthentication().getPrincipal();
+		            if(userPrincipal != null) {
+		            	WebUtils.addValueInMessageContext(context.getMessageContext(), "logout_userId", userPrincipal.getId());
+		            }
+				} catch (InvalidTicketException e) {
+					logger.error("Error to get a tgt : %s", e.getMessage());
+				} catch (Exception e) {
+					logger.error("Error : %s", e.getMessage());
+				}
+        	}
+        	
             final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
