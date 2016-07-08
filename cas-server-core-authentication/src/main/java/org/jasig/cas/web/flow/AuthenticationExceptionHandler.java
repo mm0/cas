@@ -156,11 +156,22 @@ public class AuthenticationExceptionHandler {
      */
     private final void publishMessage(final MessageContext messageContext, final String message) {
     	if ("".equals(message) || message == null) {
-    		logger.error("*** the message is required to pubish an error message ***");
+    		logger.error("*** Error : the message is required to pubish an error message ***");
     		return;
     	}
-		final String tenantId = AuthUtils.getTenantId();
+		
+    	final String tenantId = AuthUtils.getTenantId();
+		if("".equals(tenantId) || tenantId == null) {
+			logger.error("*** Error : the tenantId is required to pubish an error message ***");
+    		return;
+		}
+		
 		final String user = AuthUtils.getCredential();
+		if("".equals(user) || user == null) {
+			logger.error("*** Error : the user is required to pubish an error message ***");
+    		return;
+		}
+		
 		final String messageforBroker = String.format("Credential: %s, message: %s", user, message);
 		try {
           EventPublisher.publishEvent(messageContext,
