@@ -161,25 +161,24 @@ public class AuthenticationExceptionHandler {
     	}
 		
     	final String tenantId = AuthUtils.getTenantId();
-		if("".equals(tenantId) || tenantId == null) {
-			logger.error("*** Error : the tenantId is required to pubish an error message ***");
+    	if("".equals(tenantId) || tenantId == null) {
+    		logger.error("*** Error : the tenantId is required to pubish an error message ***");
     		return;
-		}
-		
-		final String user = AuthUtils.getCredential();
-		if("".equals(user) || user == null) {
-			logger.error("*** Error : the user is required to pubish an error message ***");
+    	}
+    	
+    	final String user = AuthUtils.getCredential();
+    	if("".equals(user) || user == null) {
+    		logger.error("*** Error : the user is required to pubish an error message ***");
     		return;
-		}
-		
-		final String messageforBroker = String.format("Credential: %s, message: %s", user, message);
-		try {
-          EventPublisher.publishEvent(messageContext,
-        	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, messageforBroker);
-          logger.info("Successfully published login event for a user " + user);
-        }
-        catch (final Exception e) {
-        	logger.warn("Could not publish login event for a user "+ user, e);
-        }
+    	}
+    	
+    	final String messageforBroker = String.format("Credential: %s, message: %s", user, message);
+    	try {
+    		EventPublisher.publishEvent(messageContext,
+    				EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, messageforBroker);
+    		logger.info("Successfully published login event for a user " + user);
+    	} catch (final Exception e) {
+    		logger.warn("Could not publish login event for a user "+ user, e);
+    	}
     }
 }

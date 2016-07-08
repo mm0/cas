@@ -130,12 +130,11 @@ public final class LogoutAction extends AbstractLogoutAction {
 		final String user = context.getMessageContext().getMessagesBySource("actorName")[0].getText();
 		final String message = String.format("The user %s logged out", user);
 		try {
-          EventPublisher.publishEvent(context.getMessageContext(),
-        	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
-          logger.info("Successfully published logout event for a user " + user);
-        }
-        catch (final Exception e) {
-        	logger.warn("Could not publish logout event for a user "+ user, e);
-        }
+			EventPublisher.publishEvent(context.getMessageContext(),
+					EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
+			logger.info("Successfully published logout event for a user " + user);
+		} catch (final Exception e) {
+			logger.warn("Could not publish logout event for a user "+ user, e);
+		}
     }
 }

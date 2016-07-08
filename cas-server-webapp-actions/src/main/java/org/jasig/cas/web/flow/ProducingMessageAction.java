@@ -60,13 +60,12 @@ public class ProducingMessageAction extends AbstractAction {
 
 		final String message = String.format("The user %s logged in successfully", credential.toString());
 		try {
-          EventPublisher.publishEvent(context.getMessageContext(),
-        	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
-          logger.info("Successfully published login event for a user " + credential.toString());
-        }
-        catch (final Exception e) {
-        	logger.warn("Could not publish login event for a user "+ credential.toString(), e);
-        }
+			EventPublisher.publishEvent(context.getMessageContext(),
+					EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
+			logger.info("Successfully published login event for a user " + credential.toString());
+		} catch (final Exception e) {
+			logger.warn("Could not publish login event for a user "+ credential.toString(), e);
+		}
 
 		return success();
     }

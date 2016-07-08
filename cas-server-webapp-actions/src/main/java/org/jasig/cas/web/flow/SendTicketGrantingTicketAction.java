@@ -91,13 +91,13 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
         }
-
-		try {
-			final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-			WebUtils.addPrincipalInMessageContext(context, ticket);
-		} catch (InvalidTicketException e) {
-			LOGGER.error("Error to get a tgt : " + e.toString());
-		}
+        
+        try {
+        	final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        	WebUtils.addPrincipalInMessageContext(context, ticket);
+        } catch (InvalidTicketException e) {
+        	LOGGER.error("Error to get a tgt : " + e.toString());
+        }
         
         return success();
     }

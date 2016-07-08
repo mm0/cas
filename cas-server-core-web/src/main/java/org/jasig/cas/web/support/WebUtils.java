@@ -488,18 +488,18 @@ public final class WebUtils {
      */
     public static void addPrincipalInMessageContext( final RequestContext context,
             final TicketGrantingTicket ticket) {
-		final Principal userPrincipal = ticket.getAuthentication().getPrincipal();
-		if(userPrincipal != null) {
-	        for (final Entry<String, Object> e : userPrincipal.getAttributes().entrySet()) {
-	        	switch (e.getKey()) {
-	            case "entryUUID":
-	            	WebUtils.addValueInMessageContext(context.getMessageContext(), "actorId", e.getValue().toString());
-	            	break;
-	            case "mail":
-	            	WebUtils.addValueInMessageContext(context.getMessageContext(), "actorName", e.getValue().toString());
-	            	break;
-	            }
-	        }
-		}
+    	final Principal userPrincipal = ticket.getAuthentication().getPrincipal();
+    	if(userPrincipal != null) {
+    		for (final Entry<String, Object> e : userPrincipal.getAttributes().entrySet()) {
+    			switch (e.getKey()) {
+    			case "entryUUID":
+    				WebUtils.addValueInMessageContext(context.getMessageContext(), "actorId", e.getValue().toString());
+    				break;
+    			case "mail":
+    				WebUtils.addValueInMessageContext(context.getMessageContext(), "actorName", e.getValue().toString());
+    				break;
+    			}
+    		}
+    	}
     }
 }
