@@ -1,6 +1,8 @@
 package org.jasig.cas.web.flow;
 
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,17 +85,12 @@ public final class TerminateSessionAction {
         if (tgtId != null) {
         	final String flowDefinitionId = context.getFlowExecutionContext().getDefinition().getId();
         	if(flowDefinitionId != null && flowDefinitionId.equals("logout")) {
-		        try {
-					TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
-					final Principal userPrincipal = ticket.getAuthentication().getPrincipal();
-		            if(userPrincipal != null) {
-		            	WebUtils.addValueInMessageContext(context.getMessageContext(), "logout_userId", userPrincipal.getId());
-		            }
-				} catch (InvalidTicketException e) {
-					logger.error("Error to get a tgt : %s", e.getMessage());
-				} catch (Exception e) {
-					logger.error("Error : %s", e.getMessage());
-				}
+        		try {
+        			final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+        			WebUtils.addPrincipalInMessageContext(context, ticket);
+        		} catch (InvalidTicketException e) {
+        			logger.error("Error to get a tgt : " + e.toString());
+        		}
         	}
         	
             final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);

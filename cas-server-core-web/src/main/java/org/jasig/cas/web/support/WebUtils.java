@@ -2,10 +2,12 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.pac4j.core.context.J2EContext;
@@ -34,6 +36,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 /**
  * Common utilities for the web tier.
@@ -451,8 +454,6 @@ public final class WebUtils {
      */
     public static void putValuesOfBrokerEvent(
             final MessageContext messageContext, final HttpServletRequest httpReq) {
-    	addValueInMessageContext(messageContext, "actorId", "30ba7ea0-b1d3-3025-a36f-7c8e1f0c4b51");
-    	addValueInMessageContext(messageContext, "actorName", "cloudadmin@wavity.com");
     	addValueInMessageContext(messageContext, "clientId", httpReq.getRemoteUser());
     	addValueInMessageContext(messageContext, "clientIp", httpReq.getRemoteHost());
     	addValueInMessageContext(messageContext, "ecId", UUID.randomUUID().toString());
@@ -470,11 +471,35 @@ public final class WebUtils {
      */
     public static void addValueInMessageContext(
             final MessageContext messageContext,
-            @NotNull final String source, @NotNull final String value) {
-    	final MessageBuilder messageBuilder = new MessageBuilder();
-    	messageBuilder.source(source);
+            final String source, final String value) {
     	if(value != null) {
+    		final MessageBuilder messageBuilder = new MessageBuilder();
+    		messageBuilder.source(source);
     		messageContext.addMessage(messageBuilder.info().code(value).build());
     	}
+    }
+    
+    /**
+     * Add user principal's entryUUID and mail in message context.
+     *
+     * @param messageContext the message context
+     * @param source the source
+     * @param value the value
+     */
+    public static void addPrincipalInMessageContext( final RequestContext context,
+            final TicketGrantingTicket ticket) {
+		final Principal userPrincipal = ticket.getAuthentication().getPrincipal();
+		if(userPrincipal != null) {
+	        for (final Entry<String, Object> e : userPrincipal.getAttributes().entrySet()) {
+	        	switch (e.getKey()) {
+	            case "entryUUID":
+	            	WebUtils.addValueInMessageContext(context.getMessageContext(), "actorId", e.getValue().toString());
+	            	break;
+	            case "mail":
+	            	WebUtils.addValueInMessageContext(context.getMessageContext(), "actorName", e.getValue().toString());
+	            	break;
+	            }
+	        }
+		}
     }
 }

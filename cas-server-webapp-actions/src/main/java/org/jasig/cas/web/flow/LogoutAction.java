@@ -120,15 +120,15 @@ public final class LogoutAction extends AbstractLogoutAction {
     	String tenantId = null;
     	if (request != null) {
 			tenantId = AuthUtils.extractTenantID(request);
+			WebUtils.putValuesOfBrokerEvent(context.getMessageContext(), request);
 		}
 		if (tenantId == null || "".equals(tenantId)) {
 			logger.error("*** Tenant ID can't be empty or null ***");
 			return;
 		}
 		
-		final String user = context.getMessageContext().getMessagesBySource("logout_userId")[0].getText();
+		final String user = context.getMessageContext().getMessagesBySource("actorName")[0].getText();
 		final String message = String.format("The user %s logged out", user);
-        WebUtils.putValuesOfBrokerEvent(context.getMessageContext(), request);
 		try {
           EventPublisher.publishEvent(context.getMessageContext(),
         	  EventType.EVENT_TYPE_SSO_AUTHENTICATION, tenantId, EventResult.SUCCESS, message);
