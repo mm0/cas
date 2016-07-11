@@ -77,7 +77,10 @@ public final class LogoutAction extends AbstractLogoutAction {
         }
         
         // Produce a message using broker API
-        produceLogoutMessage(context);
+        final String tgtIsNull = EventPublisher.getValueFromMessageList(context.getMessageContext().getMessagesBySource("tgtIsNull"));
+        if(tgtIsNull != null && tgtIsNull.equals(Boolean.toString(false))) {
+        	produceLogoutMessage(context);
+        }
         
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (this.followServiceRedirects && service != null) {
@@ -127,7 +130,12 @@ public final class LogoutAction extends AbstractLogoutAction {
 			return;
 		}
 		
-		final String user = context.getMessageContext().getMessagesBySource("actorName")[0].getText();
+		final String user = EventPublisher.getValueFromMessageList(context.getMessageContext().getMessagesBySource("actorName"));
+		if(user == null || "".equals(user)) {
+			logger.error("*** Username can't be empty or null ***");
+			return;
+		}
+		
 		final String message = String.format("The user %s logged out", user);
 		try {
 			EventPublisher.publishEvent(context.getMessageContext(),

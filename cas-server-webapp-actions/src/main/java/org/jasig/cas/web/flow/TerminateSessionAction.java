@@ -87,6 +87,7 @@ public final class TerminateSessionAction {
         	if(flowDefinitionId != null && flowDefinitionId.equals("logout")) {
         		try {
         			final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+        			WebUtils.addValueInMessageContext(context.getMessageContext(), "tgtIsNull", Boolean.toString(false));
         			WebUtils.addPrincipalInMessageContext(context, ticket);
         		} catch (InvalidTicketException e) {
         			logger.error("Error to get a tgt : " + e.toString());
